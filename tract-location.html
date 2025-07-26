@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📍 Smart Location Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 28px;
+    }
+    .info {
+      background: #fff;
+      padding: 15px;
+      margin: 20px auto;
+      width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📍 Smart Location Tracker</h1>
+
+  <div class="info">
+    <p><strong>Latitude:</strong> <span id="lat">Loading...</span></p>
+    <p><strong>Longitude:</strong> <span id="long">Loading...</span></p>
+    <p><strong>Network Status:</strong> <span id="networkStatus">Checking...</span></p>
+    <p><strong>Connection Type:</strong> <span id="connectionType">--</span></p>
+  </div>
+
+  <canvas id="statusCanvas" width="200" height="200"></canvas>
+
+  <script>
+    // Geolocation API
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          document.getElementById("lat").textContent = position.coords.latitude.toFixed(5);
+          document.getElementById("long").textContent = position.coords.longitude.toFixed(5);
+        }, (error) => {
+          document.getElementById("lat").textContent = "Not available";
+          document.getElementById("long").textContent = "Not available";
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    // Network Information API
+    function getNetworkStatus() {
+      const statusEl = document.getElementById("networkStatus");
+      const typeEl = document.getElementById("connectionType");
+
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+      if (navigator.onLine) {
+        statusEl.textContent = "Online ✅";
+      } else {
+        statusEl.textContent = "Offline ❌";
+      }
+
+      if (connection) {
+        typeEl.textContent = connection.effectiveType || connection.type;
+      } else {
+        typeEl.textContent = "Not supported";
+      }
+    }
+
+    // Canvas API - draw status graphic
+    function drawCanvas() {
+      const canvas = document.getElementById("statusCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // Clear previous drawings
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw base circle
+      ctx.beginPath();
+      ctx.arc(100, 100, 80, 0, 2 * Math.PI);
+      ctx.fillStyle = "#e0e0e0";
+      ctx.fill();
+      ctx.closePath();
+
+      // Draw active status arc
+      ctx.beginPath();
+      ctx.arc(100, 100, 80, -Math.PI / 2, Math.PI / 2);
+      ctx.strokeStyle = "#4CAF50";
+      ctx.lineWidth = 15;
+      ctx.stroke();
+      ctx.closePath();
+
+      // Draw text in center
+      ctx.fillStyle = "#000";
+      ctx.font = "18px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Active", 100, 105);
+    }
+
+    // Call all functions on page load
+    getLocation();
+    getNetworkStatus();
+    drawCanvas();
+  </script>
+</body>
+</html>

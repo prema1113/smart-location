@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Location</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 15px;
+      font-size: 16px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      background-color: #fff;
+    }
+
+    #details, #map {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #map iframe {
+      margin: auto;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📍 Smart Location</h1>
+
+  <button onclick="getLocation()">Find My Location</button>
+
+  <div id="details">
+    <canvas id="statusCanvas" width="400" height="120"></canvas>
+
+    <p><strong>Direction:</strong> <span id="direction">Start moving...</span></p>
+    <p><strong>Speed:</strong> <span id="speed">Start moving to get the speed...</span></p>
+
+    <button onclick="showMap()">Click on Map</button>
+  </div>
+
+  <div id="map"></div>
+
+  <script>
+    let latitude = '';
+    let longitude = '';
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          latitude = position.coords.latitude.toFixed(5);
+          longitude = position.coords.longitude.toFixed(5);
+          const speed = position.coords.speed;
+
+          document.getElementById("direction").textContent = "Start moving...";
+          document.getElementById("speed").textContent = speed ? speed + " m/s" : "Start moving to get the speed...";
+
+          document.getElementById("details").style.display = "block";
+
+          const canvas = document.getElementById("statusCanvas");
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Green dot at top center
+          ctx.beginPath();
+          ctx.arc(canvas.width / 2, 20, 10, 0, Math.PI * 2);
+          ctx.fillStyle = "green";
+          ctx.fill();
+
+          // Text under the dot
+          ctx.font = "16px Arial";
+          ctx.fillStyle = "black";
+          ctx.textAlign = "center";
+          ctx.fillText("You are connected", canvas.width / 2, 50);
+          ctx.fillText(`Lat: ${latitude}`, canvas.width / 2, 75);
+          ctx.fillText(`Lon: ${longitude}`, canvas.width / 2, 100);
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function showMap() {
+      const mapUrl = `https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
+      const iframe = `<iframe width="100%" height="300" frameborder="0" 
+        src="${mapUrl}" allowfullscreen></iframe>`;
+
+      document.getElementById("map").innerHTML = iframe;
+      document.getElementById("map").style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

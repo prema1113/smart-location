@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Location Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f0f8ff;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .status {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border-radius: 100%;
+      background-color: yellow;
+      margin-bottom: 10px;
+    }
+
+    .status.online {
+      background-color: green;
+    }
+
+    .status.offline {
+      background-color: red;
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .info p {
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📍 Smart Location Tracker</h1>
+
+  <!-- Full circle status indicator -->
+  <div class="status" id="networkStatus"></div>
+  <div><strong>Network Status</strong></div>
+
+  <!-- Location Info -->
+  <div class="info" id="locationInfo">
+  <p><strong>Latitude:</strong> <span id="latitude">Loading...</span></p>
+  <p><strong>Longitude:</strong> <span id="longitude">Loading...</span></p>
+  <p><strong>Speed:</strong> <span id="speed">Detecting...</span></p>
+</div>
+
+<!-- Map Image -->
+<div style="margin-top: 20px;">
+  <img id="staticMap" src="" alt="Map showing your location" style="width: 100%; max-width: 400px; border-radius: 8px;" />
+</div>
+
+
+  <script>
+    // Geolocation API
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      document.getElementById("latitude").textContent = lat;
+      document.getElementById("longitude").textContent = lon;
+      document.getElementById("speed").textContent = position.coords.speed ? position.coords.speed + " m/s" : "Not available";
+
+      // Static Map from OpenStreetMap
+      const mapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lon}&zoom=14&size=400x300&markers=${lat},${lon},red-pushpin`;
+      document.getElementById("staticMap").src = mapUrl;
+    });
+  </script>
+
+</body>
+</html>
